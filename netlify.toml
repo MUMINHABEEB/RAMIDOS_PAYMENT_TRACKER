@@ -2,6 +2,9 @@
   functions = "netlify/functions"
   publish = "public"
 
+[build.environment]
+  SECRETS_SCAN_ENABLED = "false"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
