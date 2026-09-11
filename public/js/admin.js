@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Check admin role
-  if (user && user.role !== 'admin') {
-    adminSetupCard.classList.remove('hidden');
-    showAlert('Your account currently has standard user permissions. Click "Grant Admin Access" to activate admin rights.', 'warning');
+  // Strictly enforce Admin role. Non-admin users are redirected to user dashboard.
+  if (!user || user.role !== 'admin') {
+    window.location.href = '/index.html?unauthorized=true';
+    return;
   }
 
   // Claim admin listener

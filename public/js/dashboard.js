@@ -24,11 +24,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const historyContainer = document.getElementById('historyContainer');
   const logoutBtn = document.getElementById('logoutBtn');
 
+  const adminNavBtn = document.getElementById('adminNavBtn');
+
   // Set Logged-In User Information
   if (user) {
     if (userNameEl) userNameEl.textContent = user.username;
     if (userEmailEl) userEmailEl.textContent = user.email;
     if (colleagueNameInput) colleagueNameInput.value = `${user.username} (${user.email})`;
+    
+    // Show Admin Panel button ONLY if user is an admin
+    if (user.role === 'admin' && adminNavBtn) {
+      adminNavBtn.classList.remove('hidden');
+    }
+  }
+
+  // Check URL parameters for unauthorized access attempt
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('unauthorized') === 'true') {
+    showAlert('Access denied. Administrator privileges are required to view the Admin Panel.', 'error');
   }
 
   // Logout listener
