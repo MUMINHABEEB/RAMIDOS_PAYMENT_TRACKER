@@ -8,7 +8,7 @@ const authMiddleware = require('../middleware/auth');
 // Helper to sign JWT
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, username: user.username, email: user.email },
+    { id: user._id, username: user.username, email: user.email, role: user.role || 'user' },
     process.env.JWT_SECRET || 'fallback_secret',
     { expiresIn: '7d' }
   );
@@ -72,7 +72,8 @@ router.post('/register', async (req, res) => {
       user: {
         id: newUser._id,
         username: newUser.username,
-        email: newUser.email
+        email: newUser.email,
+        role: newUser.role || 'user'
       }
     });
 
@@ -132,7 +133,8 @@ router.post('/login', async (req, res) => {
       user: {
         id: user._id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role || 'user'
       }
     });
 

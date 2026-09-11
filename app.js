@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payments');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
