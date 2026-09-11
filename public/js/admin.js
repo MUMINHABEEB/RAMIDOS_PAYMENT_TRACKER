@@ -29,7 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await authFetch('/api/auth/me');
       const data = await response.json();
-      if (!data.success || !data.user || data.user.role !== 'admin') {
+      const isMuminAdmin = data.success && 
+        data.user && 
+        data.user.role === 'admin' && 
+        (data.user.username === 'mumin_admin' || data.user.email === 'admin@ramidos.com');
+
+      if (!isMuminAdmin) {
         window.location.href = '/index.html?unauthorized=true';
         return false;
       }

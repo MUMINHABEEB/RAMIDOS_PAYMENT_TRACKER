@@ -9,16 +9,21 @@ const adminMiddleware = async (req, res, next) => {
       });
     }
 
-    // Always fetch fresh user from database to verify admin role
+    // Always fetch fresh user from database
     const dbUser = await User.findById(req.user.id);
 
-    if (dbUser && dbUser.role === 'admin') {
+    // EXPLICIT REQUIREMENT: Strictly allow ONLY the 'mumin_admin' account
+    const isMuminAdmin = dbUser && 
+      dbUser.role === 'admin' && 
+      (dbUser.username === 'mumin_admin' || dbUser.email === 'admin@ramidos.com');
+
+    if (isMuminAdmin) {
       req.user.role = 'admin';
       next();
     } else {
       return res.status(403).json({
         success: false,
-        message: 'Access denied. Administrator privileges required.'
+        message: 'Access denied. Administrator panel is restricted exclusively to mumin_admin.'
       });
     }
   } catch (error) {

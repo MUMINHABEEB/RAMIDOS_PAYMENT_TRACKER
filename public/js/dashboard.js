@@ -32,8 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (userEmailEl) userEmailEl.textContent = user.email;
     if (colleagueNameInput) colleagueNameInput.value = `${user.username} (${user.email})`;
     
-    // Show Admin Panel button ONLY if user is an admin
-    if (user.role === 'admin' && adminNavBtn) {
+    // Show Admin Panel button ONLY if user is mumin_admin
+    const isMuminAdmin = user.role === 'admin' && (user.username === 'mumin_admin' || user.email === 'admin@ramidos.com');
+    if (isMuminAdmin && adminNavBtn) {
       adminNavBtn.classList.remove('hidden');
     }
   }
@@ -45,9 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       if (data.success && data.user) {
         setAuth(getToken(), data.user);
-        if (data.user.role === 'admin' && adminNavBtn) {
+        const isMuminAdmin = data.user.role === 'admin' && (data.user.username === 'mumin_admin' || data.user.email === 'admin@ramidos.com');
+        if (isMuminAdmin && adminNavBtn) {
           adminNavBtn.classList.remove('hidden');
-        } else if (data.user.role !== 'admin' && adminNavBtn) {
+        } else if (adminNavBtn) {
           adminNavBtn.classList.add('hidden');
         }
       }

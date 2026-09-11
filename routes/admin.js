@@ -65,49 +65,4 @@ router.get('/stats', authMiddleware, adminMiddleware, async (req, res) => {
   }
 });
 
-// @route   POST /api/admin/make-admin
-// @desc    Promote logged-in user to admin (or self-promote using setup secret / first user rule)
-// @access  Private
-router.post('/make-admin', authMiddleware, async (req, res) => {
-  try {
-    const { setupSecret } = req.body;
-    const expectedSecret = process.env.ADMIN_SETUP_SECRET || 'ramidos_admin_secret_2026';
-
-    const adminCount = await User.countDocuments({ role: 'admin' });
-
-    // Allow promotion if setupSecret matches OR if no admin exists yet
-    if (adminCount > 0 && setupSecret !== expectedSecret) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid setup secret. Admin promotion denied.'
-      });
-    }
-
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found.' });
-    }
-
-    user.role = 'admin';
-    await user.save();
-
-    res.json({
-      success: true,
-      message: `User ${user.username} has been promoted to Admin successfully!`,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role
-      }
-    });
-  } catch (error) {
-    console.error('[Admin Promotion Error]:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to promote user to Admin.'
-    });
-  }
-});
-
 module.exports = router;
