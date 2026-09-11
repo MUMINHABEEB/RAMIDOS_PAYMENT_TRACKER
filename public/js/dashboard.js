@@ -38,6 +38,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Sync User Profile & Role from database
+  async function syncUserProfile() {
+    try {
+      const response = await authFetch('/api/auth/me');
+      const data = await response.json();
+      if (data.success && data.user) {
+        setAuth(getToken(), data.user);
+        if (data.user.role === 'admin' && adminNavBtn) {
+          adminNavBtn.classList.remove('hidden');
+        } else if (data.user.role !== 'admin' && adminNavBtn) {
+          adminNavBtn.classList.add('hidden');
+        }
+      }
+    } catch (e) {
+      console.warn('Profile sync warning:', e);
+    }
+  }
+  syncUserProfile();
+
   // Check URL parameters for unauthorized access attempt
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('unauthorized') === 'true') {

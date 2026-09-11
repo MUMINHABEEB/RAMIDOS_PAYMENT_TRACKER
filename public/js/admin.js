@@ -25,10 +25,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Strictly enforce Admin role. Non-admin users are redirected to user dashboard.
-  if (!user || user.role !== 'admin') {
-    window.location.href = '/index.html?unauthorized=true';
-    return;
+  async function checkAdminAccess() {
+    try {
+      const response = await authFetch('/api/auth/me');
+      const data = await response.json();
+      if (!data.success || !data.user || data.user.role !== 'admin') {
+        window.location.href = '/index.html?unauthorized=true';
+        return false;
+      }
+      setAuth(getToken(), data.user);
+      return true;
+    } catch (err) {
+      window.location.href = '/index.html?unauthorized=true';
+      return false;
+    }
   }
 
   // Claim admin listener
@@ -66,6 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function initAdminDashboard() {
+    const isAdmin = await checkAdminAccess();
+    if (!isAdmin) return;
     await loadStats();
     await loadAllPayments();
   }
